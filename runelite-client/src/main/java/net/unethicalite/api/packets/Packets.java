@@ -1,161 +1,178 @@
 package net.unethicalite.api.packets;
 
+import net.runelite.api.packets.ClientPacket;
 import net.runelite.api.packets.PacketBufferNode;
-import net.unethicalite.api.game.Game;
+import net.runelite.api.packets.PacketWriter;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetType;
+import net.unethicalite.api.events.MenuAutomated;
+import net.unethicalite.api.exception.InteractionException;
+import net.unethicalite.api.game.GameThread;
+import net.unethicalite.api.widgets.Widgets;
 import net.unethicalite.client.Static;
 
-public class PlayerPackets
+public class Packets
 {
-	public static void queueItemUseOnPlayerPacket(int playerIndex, int itemId, int itemSlot, int itemWidgetId, boolean ctrlDown)
+	public static void queuePacket(ClientPacket clientPacket, Object... data)
 	{
-		createItemOnPlayerPacket(playerIndex, itemId, itemSlot, itemWidgetId, ctrlDown).send();
+		PacketWriter writer = Static.getClient().getPacketWriter();
+		PacketBufferNode packet = Static.getClient().preparePacket(clientPacket, writer.getIsaacCipher());
+		for (Object o : data)
+		{
+			if (o instanceof Byte)
+			{
+				packet.getPacketBuffer().writeByte(((int) (o)));
+				continue;
+			}
+			if (o instanceof Short)
+			{
+				packet.getPacketBuffer().writeShort(((int) (o)));
+				continue;
+			}
+			if (o instanceof Integer)
+			{
+				packet.getPacketBuffer().writeInt(((int) (o)));
+				continue;
+			}
+			if (o instanceof Long)
+			{
+				packet.getPacketBuffer().writeLong(((long) (o)));
+				continue;
+			}
+			if (o instanceof String)
+			{
+				packet.getPacketBuffer().writeStringCp1252NullTerminated(((String) (o)));
+				continue;
+			}
+			return;
+		}
+		packet.send();
+		writer.queuePacket(packet);
 	}
 
-	public static void queueSpellOnPlayerPacket(int playerIndex, int spellWidgetId, boolean ctrlDown)
+	public static void queuePacket(PacketBufferNode packet)
 	{
-		createSpellOnPlayer(playerIndex, spellWidgetId, ctrlDown).send();
+		GameThread.invoke(() -> Static.getClient().getPacketWriter().queuePacket(packet));
 	}
 
-	public static void queuePlayerAction1Packet(int playerIndex, boolean ctrlDown)
+	public static PacketBufferNode fromAutomatedMenu(MenuAutomated menu)
 	{
-		createFirstAction(playerIndex, ctrlDown).send();
-	}
-
-	public static void queuePlayerAction2Packet(int playerIndex, boolean ctrlDown)
-	{
-		createSecondAction(playerIndex, ctrlDown).send();
-	}
-
-	public static void queuePlayerAction3Packet(int playerIndex, boolean ctrlDown)
-	{
-		createThirdAction(playerIndex, ctrlDown).send();
-	}
-
-	public static void queuePlayerAction4Packet(int playerIndex, boolean ctrlDown)
-	{
-		createFourthAction(playerIndex, ctrlDown).send();
-	}
-
-	public static void queuePlayerAction5Packet(int playerIndex, boolean ctrlDown)
-	{
-		createFifthAction(playerIndex, ctrlDown).send();
-	}
-
-	public static void queuePlayerAction6Packet(int playerIndex, boolean ctrlDown)
-	{
-		createSixthAction(playerIndex, ctrlDown).send();
-	}
-
-	public static void queuePlayerAction7Packet(int playerIndex, boolean ctrlDown)
-	{
-		createSeventhAction(playerIndex, ctrlDown).send();
-	}
-
-	public static void queuePlayerAction8Packet(int playerIndex, boolean ctrlDown)
-	{
-		createEighthAction(playerIndex, ctrlDown).send();
-	}
-
-	public static PacketBufferNode createItemOnPlayerPacket(int playerIndex, int itemId, int itemSlot, int itemWidgetId, boolean ctrlDown)
-	{
-		return createWidgetOnPlayer(playerIndex, itemId, itemSlot, itemWidgetId, ctrlDown);
-	}
-
-	public static PacketBufferNode createWidgetOnPlayer(int playerIndex, int sourceItemId, int sourceSlot, int sourceWidgetId, boolean ctrlDown)
-	{
+		var opcode = menu.getOpcode();
 		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPPLAYERT(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeByteAdd(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShort(playerIndex);
-		packetBufferNode.getPacketBuffer().writeIntIME(sourceWidgetId);
-		packetBufferNode.getPacketBuffer().writeShortAdd(sourceSlot);
-		packetBufferNode.getPacketBuffer().writeShortLE(sourceItemId);
-		return packetBufferNode;
-	}
-
-	public static PacketBufferNode createSpellOnPlayer(int playerIndex, int spellWidgetId, boolean ctrlDown)
-	{
-		return createWidgetOnPlayer(playerIndex, -1, -1, spellWidgetId, ctrlDown);
-	}
-
-	public static PacketBufferNode createFirstAction(int playerIndex, boolean ctrlDown)
-	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPPLAYER1(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeByteSub(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShortAddLE(playerIndex);
-		return packetBufferNode;
-	}
-
-	public static PacketBufferNode createSecondAction(int playerIndex, boolean ctrlDown)
-	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPPLAYER2(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeShortLE(playerIndex);
-		packetBufferNode.getPacketBuffer().writeByteNeg(ctrlDown ? 1 : 0);
-		return packetBufferNode;
-	}
-
-	public static PacketBufferNode createThirdAction(int playerIndex, boolean ctrlDown)
-	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPPLAYER3(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeShortAddLE(playerIndex);
-		packetBufferNode.getPacketBuffer().writeByte(ctrlDown ? 1 : 0);
-		return packetBufferNode;
-	}
-
-	public static PacketBufferNode createFourthAction(int playerIndex, boolean ctrlDown)
-	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPPLAYER4(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeByteNeg(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShort(playerIndex);
-		return packetBufferNode;
-	}
-
-	public static PacketBufferNode createFifthAction(int playerIndex, boolean ctrlDown)
-	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPPLAYER5(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeByteSub(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShortAddLE(playerIndex);
-		return packetBufferNode;
-	}
-
-	public static PacketBufferNode createSixthAction(int playerIndex, boolean ctrlDown)
-	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPPLAYER6(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeByte(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShortAdd(playerIndex);
-		return packetBufferNode;
-	}
-
-	public static PacketBufferNode createSeventhAction(int playerIndex, boolean ctrlDown)
-	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPPLAYER7(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeByteNeg(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShortLE(playerIndex);
-		return packetBufferNode;
-	}
-
-	public static PacketBufferNode createEighthAction(int playerIndex, boolean ctrlDown)
-	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPPLAYER8(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeByteSub(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShortAddLE(playerIndex);
-		return packetBufferNode;
+		var id = menu.getIdentifier();
+		var param0 = menu.getParam0();
+		var param1 = menu.getParam1();
+		var selectedWidgetItemId = client.getSelectedSpellItemId();
+		var selectedWidgetSlot = client.getSelectedSpellChildIndex();
+		var selectedWidget = client.getSelectedSpellWidget();
+		var selectedSpellWidget = client.getSelectedSpellWidget();
+		switch (opcode)
+		{
+			case ITEM_USE_ON_GAME_OBJECT:
+			case WIDGET_TARGET_ON_GAME_OBJECT:
+				return ObjectPackets.createWidgetOnObjectPacket(id, param0 + client.getBaseX(), param1 + client.getBaseY(), selectedWidgetSlot, selectedWidgetItemId, selectedWidget, false);
+			case GAME_OBJECT_FIRST_OPTION:
+				return ObjectPackets.createObjectFirstActionPacket(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case GAME_OBJECT_SECOND_OPTION:
+				return ObjectPackets.createObjectSecondActionPacket(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case GAME_OBJECT_THIRD_OPTION:
+				return ObjectPackets.createObjectThirdActionPacket(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case GAME_OBJECT_FOURTH_OPTION:
+				return ObjectPackets.createObjectFourthActionPacket(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case GAME_OBJECT_FIFTH_OPTION:
+				return ObjectPackets.createObjectFifthActionPacket(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case ITEM_USE_ON_NPC:
+			case WIDGET_TARGET_ON_NPC:
+				return NPCPackets.createWidgetOnNpc(id, selectedWidget, selectedWidgetItemId, selectedWidgetSlot, false);
+			case NPC_FIRST_OPTION:
+				return NPCPackets.createNpcFirstActionPacket(id, false);
+			case NPC_SECOND_OPTION:
+				return NPCPackets.createNpcSecondActionPacket(id, false);
+			case NPC_THIRD_OPTION:
+				return NPCPackets.createNpcThirdActionPacket(id, false);
+			case NPC_FOURTH_OPTION:
+				return NPCPackets.createNpcFourthActionPacket(id, false);
+			case NPC_FIFTH_OPTION:
+				return NPCPackets.createNpcFifthActionPacket(id, false);
+			case ITEM_USE_ON_PLAYER:
+			case WIDGET_TARGET_ON_PLAYER:
+				return PlayerPackets.createWidgetOnPlayer(id, selectedWidgetItemId, selectedWidgetSlot, selectedWidget, false);
+			case PLAYER_FIRST_OPTION:
+				return PlayerPackets.createFirstAction(id, false);
+			case PLAYER_SECOND_OPTION:
+				return PlayerPackets.createSecondAction(id, false);
+			case PLAYER_THIRD_OPTION:
+				return PlayerPackets.createThirdAction(id, false);
+			case PLAYER_FOURTH_OPTION:
+				return PlayerPackets.createFourthAction(id, false);
+			case PLAYER_FIFTH_OPTION:
+				return PlayerPackets.createFifthAction(id, false);
+			case PLAYER_SIXTH_OPTION:
+				return PlayerPackets.createSixthAction(id, false);
+			case PLAYER_SEVENTH_OPTION:
+				return PlayerPackets.createSeventhAction(id, false);
+			case PLAYER_EIGHTH_OPTION:
+				return PlayerPackets.createEighthAction(id, false);
+			case ITEM_USE_ON_GROUND_ITEM:
+			case WIDGET_TARGET_ON_GROUND_ITEM:
+				return GroundItemPackets.createWidgetOnGroundItem(id, param0 + client.getBaseX(), param1 + client.getBaseY(), selectedWidgetSlot, selectedWidgetItemId, selectedWidget, false);
+			case GROUND_ITEM_FIRST_OPTION:
+				return GroundItemPackets.createFirstAction(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case GROUND_ITEM_SECOND_OPTION:
+				return GroundItemPackets.createSecondAction(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case GROUND_ITEM_THIRD_OPTION:
+				return GroundItemPackets.createThirdAction(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case GROUND_ITEM_FOURTH_OPTION:
+				return GroundItemPackets.createFourthAction(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case GROUND_ITEM_FIFTH_OPTION:
+				return GroundItemPackets.createFifthAction(id, param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+			case ITEM_USE_ON_ITEM:
+			case WIDGET_TARGET_ON_WIDGET:
+				Widget targetParent = Widgets.fromId(param1);
+				assert targetParent != null;
+				Widget targetChild = targetParent.getChild(param0);
+				int childItemId = -1;
+				if (targetChild != null)
+				{
+					childItemId = targetChild.getItemId();
+				}
+				Widget source = client.getWidget(selectedWidget);
+				assert source != null;
+				if (source.getType() == WidgetType.GRAPHIC)
+				{
+					selectedWidgetSlot = -1;
+					selectedWidgetItemId = -1;
+				}
+				return WidgetPackets.createWidgetOnWidget(selectedWidget, selectedWidgetSlot, selectedWidgetItemId, childItemId, param0, param1);
+			case ITEM_FIRST_OPTION:
+				return ItemPackets.createFirstAction(param1, id, param0);
+			case ITEM_SECOND_OPTION:
+				return ItemPackets.createSecondAction(param1, id, param0);
+			case ITEM_THIRD_OPTION:
+				return ItemPackets.createThirdAction(param1, id, param0);
+			case ITEM_FOURTH_OPTION:
+				return ItemPackets.createFourthAction(param1, id, param0);
+			case ITEM_FIFTH_OPTION:
+				return ItemPackets.createFifthAction(param1, id, param0);
+			case WIDGET_FIRST_OPTION:
+				return WidgetPackets.createFirstAction(param1, -1, param0);
+			case WIDGET_SECOND_OPTION:
+				return WidgetPackets.createSecondAction(param1, -1, param0);
+			case WIDGET_THIRD_OPTION:
+				return WidgetPackets.createThirdAction(param1, -1, param0);
+			case WIDGET_FOURTH_OPTION:
+				return WidgetPackets.createFourthAction(param1, -1, param0);
+			case WIDGET_FIFTH_OPTION:
+				return WidgetPackets.createFifthAction(param1, -1, param0);
+			case WIDGET_TYPE_1:
+				return WidgetPackets.createType1Action(param1);
+			case WIDGET_CONTINUE:
+				return WidgetPackets.createContinuePacket(param1, param0);
+			case WALK:
+				client.setDestinationX(param0);
+				client.setDestinationY(param1);
+				return MovementPackets.createMovement(param0 + client.getBaseX(), param1 + client.getBaseY(), false);
+		}
+		throw new InteractionException("Couldn't parse packet from opcode: " + opcode);
 	}
 }
