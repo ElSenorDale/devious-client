@@ -1,177 +1,226 @@
 package net.unethicalite.api.packets;
 
-import net.runelite.api.TileItem;
+import net.runelite.api.InventoryID;
+import net.runelite.api.Item;
 import net.runelite.api.packets.PacketBufferNode;
-import net.unethicalite.api.game.Game;
-import net.unethicalite.client.Static;
+import net.runelite.api.widgets.WidgetInfo;
 
-public class GroundItemPackets
+public class ItemPackets
 {
-	public static void groundItemFirstOption(TileItem item, boolean ctrlDown)
-	{
-		queueGroundItemAction1Packet(item.getId(), item.getWorldLocation().getX(), item.getWorldLocation().getY(), ctrlDown);
-	}
-
-	public static void groundItemSecondOption(TileItem item, boolean ctrlDown)
-	{
-		queueGroundItemAction2Packet(item.getId(), item.getWorldLocation().getX(), item.getWorldLocation().getY(), ctrlDown);
-	}
-
-	public static void groundItemThirdOption(TileItem item, boolean ctrlDown)
-	{
-		queueGroundItemAction3Packet(item.getId(), item.getWorldLocation().getX(), item.getWorldLocation().getY(), ctrlDown);
-	}
-
-	public static void groundItemFourthOption(TileItem item, boolean ctrlDown)
-	{
-		queueGroundItemAction4Packet(item.getId(), item.getWorldLocation().getX(), item.getWorldLocation().getY(), ctrlDown);
-	}
-
-	public static void groundItemFifthOption(TileItem item, boolean ctrlDown)
-	{
-		queueGroundItemAction5Packet(item.getId(), item.getWorldLocation().getX(), item.getWorldLocation().getY(), ctrlDown);
-	}
-
-	public static void groundItemAction(TileItem item, String action, boolean ctrlDown)
+	public static void itemAction(Item item, String action)
 	{
 		int index = item.getActionIndex(action);
 		switch (index)
 		{
 			case 0:
-				groundItemFirstOption(item, ctrlDown);
+				ItemPackets.itemFirstOption(item);
 				break;
 			case 1:
-				groundItemSecondOption(item, ctrlDown);
+				ItemPackets.itemSecondOption(item);
 				break;
 			case 2:
-				groundItemThirdOption(item, ctrlDown);
+				ItemPackets.itemThirdOption(item);
 				break;
 			case 3:
-				groundItemFourthOption(item, ctrlDown);
+				ItemPackets.itemFourthOption(item);
 				break;
 			case 4:
-				groundItemFifthOption(item, ctrlDown);
+				ItemPackets.itemFifthOption(item);
+				break;
+			case 5:
+				ItemPackets.itemSixthOption(item);
+				break;
+			case 6:
+				ItemPackets.itemSeventhOption(item);
+				break;
+			case 7:
+				ItemPackets.itemEighthOption(item);
+				break;
+			case 8:
+				ItemPackets.itemNinthOption(item);
+				break;
+			case 9:
+				ItemPackets.itemTenthOption(item);
 				break;
 		}
 	}
 
-	public static void queueItemUseOnGroundObjectPacket(int groundItemId, int worldPointX, int worldPointY, int itemSlot, int itemId, int itemWidgetId, boolean ctrlDown)
+	public static void itemFirstOption(Item item)
 	{
-		createItemOnGroundItem(groundItemId, worldPointX, worldPointY, itemSlot, itemId, itemWidgetId, ctrlDown).send();
+		ItemPackets.queueItemAction1Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static void queueSpellOnGroundObjectPacket(int groundItemId, int worldPointX, int worldPointY, int spellWidgetId, boolean ctrlDown)
+	public static void itemSecondOption(Item item)
 	{
-		createSpellOnGroundItem(groundItemId, worldPointX, worldPointY, spellWidgetId, ctrlDown).send();
+		ItemPackets.queueItemAction2Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static void queueGroundItemAction1Packet(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void itemThirdOption(Item item)
 	{
-		createFirstAction(groundItemId, worldPointX, worldPointY, ctrlDown).send();
+		ItemPackets.queueItemAction3Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static void queueGroundItemAction2Packet(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void itemFourthOption(Item item)
 	{
-		createSecondAction(groundItemId, worldPointX, worldPointY, ctrlDown).send();
+		ItemPackets.queueItemAction4Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static void queueGroundItemAction3Packet(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void itemFifthOption(Item item)
 	{
-		createThirdAction(groundItemId, worldPointX, worldPointY, ctrlDown).send();
+		ItemPackets.queueItemAction5Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static void queueGroundItemAction4Packet(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void itemSixthOption(Item item)
 	{
-		createFourthAction(groundItemId, worldPointX, worldPointY, ctrlDown).send();
+		ItemPackets.queueItemAction6Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static void queueGroundItemAction5Packet(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void itemSeventhOption(Item item)
 	{
-		createFifthAction(groundItemId, worldPointX, worldPointY, ctrlDown).send();
+		ItemPackets.queueItemAction7Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static PacketBufferNode createItemOnGroundItem(int groundItemId, int worldPointX, int worldPointY, int itemSlot, int itemId, int itemWidgetId, boolean ctrlDown)
+	public static void itemEighthOption(Item item)
 	{
-		return createWidgetOnGroundItem(groundItemId, worldPointX, worldPointY, itemSlot, itemId, itemWidgetId, ctrlDown);
+		ItemPackets.queueItemAction8Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static PacketBufferNode createWidgetOnGroundItem(int groundItemId, int worldPointX, int worldPointY, int sourceSlot, int sourceItemId, int sourceWidgetId, boolean ctrlDown)
+	public static void itemNinthOption(Item item)
 	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPOBJT(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeShortLE(sourceSlot);
-		packetBufferNode.getPacketBuffer().writeShortLE(groundItemId);
-		packetBufferNode.getPacketBuffer().writeShortAddLE(worldPointX);
-		packetBufferNode.getPacketBuffer().writeShortLE(sourceItemId);
-		packetBufferNode.getPacketBuffer().writeByteAdd(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShort(worldPointY);
-		packetBufferNode.getPacketBuffer().writeIntLE(sourceWidgetId);
-		return packetBufferNode;
+		ItemPackets.queueItemAction9Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static PacketBufferNode createSpellOnGroundItem(int groundItemId, int worldPointX, int worldPointY, int spellWidgetId, boolean ctrlDown)
+	public static void itemTenthOption(Item item)
 	{
-		return createWidgetOnGroundItem(groundItemId, worldPointX, worldPointY, -1, -1, spellWidgetId, ctrlDown);
+		ItemPackets.queueItemAction10Packet(item.getWidgetId(), item.getId(), item.getSlot());
 	}
 
-	public static PacketBufferNode createFirstAction(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void useItemOnItem(Item item, Item item2)
 	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPOBJ1(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeShort(worldPointX);
-		packetBufferNode.getPacketBuffer().writeByte(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShortLE(worldPointY);
-		packetBufferNode.getPacketBuffer().writeShortAdd(groundItemId);
-		return packetBufferNode;
+		if (item.getType().getInventoryID() != InventoryID.INVENTORY || item2.getType().getInventoryID() != InventoryID.INVENTORY)
+		{
+			return;
+		}
+		ItemPackets.queueItemOnItemPacket(item.getId(), item.getSlot(), item2.getId(), item2.getSlot());
 	}
 
-	public static PacketBufferNode createSecondAction(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void queueItemOnItemPacket(int sourceItemId, int sourceItemSlot, int itemId, int itemSlot)
 	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPOBJ2(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeShort(groundItemId);
-		packetBufferNode.getPacketBuffer().writeByteAdd(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShortAddLE(worldPointX);
-		packetBufferNode.getPacketBuffer().writeShortAdd(worldPointY);
-		return packetBufferNode;
+		ItemPackets.createItemOnItem(sourceItemId, sourceItemSlot, itemId, itemSlot).send();
 	}
 
-	public static PacketBufferNode createThirdAction(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void queueSpellOnItemPacket(int itemId, int itemSlot, int spellWidgetId)
 	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPOBJ3(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeByteAdd(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShortLE(groundItemId);
-		packetBufferNode.getPacketBuffer().writeShortAddLE(worldPointX);
-		packetBufferNode.getPacketBuffer().writeShort(worldPointY);
-		return packetBufferNode;
+		ItemPackets.createSpellOnItem(itemId, itemSlot, spellWidgetId).send();
 	}
 
-	public static PacketBufferNode createFourthAction(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void queueItemAction1Packet(int itemWidgetId, int itemId, int itemSlot)
 	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPOBJ4(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeShort(worldPointX);
-		packetBufferNode.getPacketBuffer().writeShortLE(groundItemId);
-		packetBufferNode.getPacketBuffer().writeShortAddLE(worldPointY);
-		packetBufferNode.getPacketBuffer().writeByteAdd(ctrlDown ? 1 : 0);
-		return packetBufferNode;
+		ItemPackets.createFirstAction(itemWidgetId, itemId, itemSlot).send();
 	}
 
-	public static PacketBufferNode createFifthAction(int groundItemId, int worldPointX, int worldPointY, boolean ctrlDown)
+	public static void queueItemAction2Packet(int itemWidgetId, int itemId, int itemSlot)
 	{
-		var client = Static.getClient();
-		var clientPacket = Game.getClientPacket();
-		var packetBufferNode = Static.getClient().preparePacket(clientPacket.OPOBJ5(), client.getPacketWriter().getIsaacCipher());
-		packetBufferNode.getPacketBuffer().writeShortAdd(groundItemId);
-		packetBufferNode.getPacketBuffer().writeShortAdd(worldPointX);
-		packetBufferNode.getPacketBuffer().writeByteNeg(ctrlDown ? 1 : 0);
-		packetBufferNode.getPacketBuffer().writeShortAddLE(worldPointY);
-		return packetBufferNode;
+		ItemPackets.createSecondAction(itemWidgetId, itemId, itemSlot).send();
+	}
+
+	public static void queueItemAction3Packet(int itemWidgetId, int itemId, int itemSlot)
+	{
+		ItemPackets.createThirdAction(itemWidgetId, itemId, itemSlot).send();
+	}
+
+	public static void queueItemAction4Packet(int itemWidgetId, int itemId, int itemSlot)
+	{
+		ItemPackets.createFourthAction(itemWidgetId, itemId, itemSlot).send();
+	}
+
+	public static void queueItemAction5Packet(int itemWidgetId, int itemId, int itemSlot)
+	{
+		ItemPackets.createFifthAction(itemWidgetId, itemId, itemSlot).send();
+	}
+
+	public static void queueItemAction6Packet(int itemWidgetId, int itemId, int itemSlot)
+	{
+		ItemPackets.createSixthAction(itemWidgetId, itemId, itemSlot).send();
+	}
+
+	public static void queueItemAction7Packet(int itemWidgetId, int itemId, int itemSlot)
+	{
+		ItemPackets.createSeventhAction(itemWidgetId, itemId, itemSlot).send();
+	}
+
+	public static void queueItemAction8Packet(int itemWidgetId, int itemId, int itemSlot)
+	{
+		ItemPackets.createEighthAction(itemWidgetId, itemId, itemSlot).send();
+	}
+
+	public static void queueItemAction9Packet(int itemWidgetId, int itemId, int itemSlot)
+	{
+		ItemPackets.createNinthAction(itemWidgetId, itemId, itemSlot).send();
+	}
+
+	public static void queueItemAction10Packet(int itemWidgetId, int itemId, int itemSlot)
+	{
+		ItemPackets.createTenthAction(itemWidgetId, itemId, itemSlot).send();
+	}
+
+	public static PacketBufferNode createItemOnItem(int sourceItemId, int sourceItemSlot, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createWidgetOnWidget(WidgetInfo.INVENTORY.getId(), sourceItemSlot, sourceItemId, WidgetInfo.INVENTORY.getId(), itemSlot, itemId);
+	}
+
+	public static PacketBufferNode createSpellOnItem(int itemId, int itemSlot, int spellWidgetId)
+	{
+		return WidgetPackets.createWidgetOnWidget(spellWidgetId, -1, -1, WidgetInfo.INVENTORY.getId(), itemSlot, itemId);
+	}
+
+	public static PacketBufferNode createFirstAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createFirstAction(itemWidgetId, itemId, itemSlot);
+	}
+
+	public static PacketBufferNode createSecondAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createSecondAction(itemWidgetId, itemId, itemSlot);
+	}
+
+	public static PacketBufferNode createThirdAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createThirdAction(itemWidgetId, itemId, itemSlot);
+	}
+
+	public static PacketBufferNode createFourthAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createFourthAction(itemWidgetId, itemId, itemSlot);
+	}
+
+	public static PacketBufferNode createFifthAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createFifthAction(itemWidgetId, itemId, itemSlot);
+	}
+
+	public static PacketBufferNode createSixthAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createSixthAction(itemWidgetId, itemId, itemSlot);
+	}
+
+	public static PacketBufferNode createSeventhAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createSeventhAction(itemWidgetId, itemId, itemSlot);
+	}
+
+	public static PacketBufferNode createEighthAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createEighthAction(itemWidgetId, itemId, itemSlot);
+	}
+
+	public static PacketBufferNode createNinthAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createNinthAction(itemWidgetId, itemId, itemSlot);
+	}
+
+	public static PacketBufferNode createTenthAction(int itemWidgetId, int itemId, int itemSlot)
+	{
+		return WidgetPackets.createTenthAction(itemWidgetId, itemId, itemSlot);
 	}
 }
